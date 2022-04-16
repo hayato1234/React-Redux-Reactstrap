@@ -34,15 +34,12 @@ function Directory(props) {
                     <h2>Directory</h2>
                     <hr />
                 </div>
-                
             </div>
             <div className="row">
                 {directory}
             </div>
         </div>
     );
-
 }
-
 
 export default Directory;
