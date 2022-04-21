@@ -1,7 +1,13 @@
 import React, {Component} from 'react';
 import { Breadcrumb,BreadcrumbItem,Button,Label,Col,Row} from 'reactstrap';
 import {Link} from 'react-router-dom';
-import { Control, LocalForm } from 'react-redux-form'
+import { Control, LocalForm, Errors } from 'react-redux-form'
+
+const required = val => val && val.length;
+const maxLength = len => val => !val || (val.length <= len);
+const minLength = len => val => !val || (val.length >= len);
+const isNumber = val => !isNaN(+val);
+const validEmail = val => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val);
 
 class Contact extends Component {
   constructor(props) {
@@ -25,50 +31,12 @@ class Contact extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  // validate(firstName, lastName, phoneNum, email) {
-  //   const errors = {
-  //     firstName: '',
-  //     lastName: '',
-  //     phoneNum: '',
-  //     email: '',
-  //   };
-
-  //   if (this.state.touched.firstName) {
-  //     if (firstName.length < 2) {
-  //         errors.firstName = 'First name must be at least 2 characters.';
-  //     } else if(firstName.length >15){
-  //         errors.firstName = 'First name must be 15 or less characters.';
-  //     }
-  //   }
-
-  //   if (this.state.touched.lastName) {
-  //     if (lastName.length < 2) {
-  //       errors.lastName = 'Last name must be at least 2 characters.';
-  //     } else if (firstName.length > 15) {
-  //       errors.lastName = 'Last name must be 15 or less characters.';
-  //     }
-  //   }
-
-  //   const reg = /^\d+$/;
-  //   if(this.state.touched.phoneNum && !reg.test(phoneNum)){
-  //       errors.phoneNum = 'The phone number should contain only numbers.';
-  //   }
-
-  //   if(this.state.touched.email && !email.includes('@')){
-  //       errors.email = 'Email should contain an @';
-  //   }
-
-  //   return errors;
-  // }
-
   handleSubmit(values) {
     console.log('Current state is: ' + JSON.stringify(values));
     // event.preventDefault();
   }
 
   render() {
-
-    // const errors = this.validate(this.state.firstName, this.state.lastName, this.state.phoneNum, this.state.email);
 
     return (
       <div className="container">
@@ -125,6 +93,22 @@ class Contact extends Component {
                     name="firstName"
                     placeholder="First Name"
                     className="form-control"
+                    validators={{
+                      required,
+                      minLength: minLength(2),
+                      maxLength: maxLength(15),
+                    }}
+                  />
+                  <Errors
+                    className="text-danger"
+                    model=".firstName"
+                    show="touched"
+                    component="div"
+                    messages={{
+                      required: 'Required',
+                      minLength: 'Must be at least 2 characters',
+                      maxLength: 'Must be 15 characters or less',
+                    }}
                   />
                 </Col>
               </Row>
@@ -139,6 +123,22 @@ class Contact extends Component {
                     name="lastName"
                     placeholder="Last Name"
                     className="form-control"
+                    validators={{
+                      required,
+                      minLength: minLength(2),
+                      maxLength: maxLength(15),
+                    }}
+                  />
+                  <Errors
+                    className="text-danger"
+                    model=".lastName"
+                    show="touched"
+                    component="div"
+                    messages={{
+                      required: 'Required',
+                      minLength: 'Must be at least 2 characters',
+                      maxLength: 'Must be 15 characters or less',
+                    }}
                   />
                 </Col>
               </Row>
@@ -153,6 +153,23 @@ class Contact extends Component {
                     name="phoneNum"
                     placeholder="Phone number"
                     className="form-control"
+                    validators={{
+                      required,
+                      minLength: minLength(10),
+                      maxLength: maxLength(15),
+                      isNumber,
+                    }}
+                  />
+                  <Errors
+                    className="text-danger"
+                    model=".phoneNum"
+                    show="touched"
+                    component="div"
+                    messages={{
+                      required: 'Required',
+                      minLength: 'Must be at least 10 digits',
+                      maxLength: 'Must be 15 digits or less',
+                    }}
                   />
                 </Col>
               </Row>
@@ -167,6 +184,20 @@ class Contact extends Component {
                     name="email"
                     placeholder="Email"
                     className="form-control"
+                    validators={{
+                      required,
+                      validEmail,
+                    }}
+                  />
+                  <Errors
+                    className="text-danger"
+                    model=".email"
+                    show="touched"
+                    component="div"
+                    messages={{
+                      required: 'Required',
+                      validEmail: 'Invalid email address',
+                    }}
                   />
                 </Col>
               </Row>
@@ -174,21 +205,13 @@ class Contact extends Component {
                 <Col md={{size: 4, offset: 2}}>
                   <div className="form-group">
                     <Label check>
-                      <Control.checkbox
-                        model=".agree"
-                        name="agree"
-                        className="form-check-input"
-                      />{' '}
+                      <Control.checkbox model=".agree" name="agree" className="form-check-input" />{' '}
                       <strong>May we contact you?</strong>
                     </Label>
                   </div>
                 </Col>
                 <Col md={4}>
-                  <Control.select
-                  model=".contactType"
-                    name="contactType"
-                    className="form-control"
-                  >
+                  <Control.select model=".contactType" name="contactType" className="form-control">
                     <option>By Phone</option>
                     <option>By Email</option>
                   </Control.select>
