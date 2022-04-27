@@ -1,16 +1,6 @@
 import * as ActionTypes from './ActionTypes';
 import {baseUrl} from '../shared/baseUrl';
 
-export const addComment = (campsiteId, rating, author, text) => ({
-  type: ActionTypes.ADD_COMMENT,
-  payload: {
-    campsiteId: campsiteId,
-    rating: rating,
-    author, // shorthand version. same as author: author
-    text, // shorthand version
-  },
-});
-
 export const fetchCampsites = () => dispatch => {
   dispatch(campsitesLoading());
   return fetch(baseUrl + 'campsites')
@@ -91,6 +81,50 @@ export const addComments = comments => ({
   payload: comments,
 });
 
+export const addComment = comment => ({
+  type: ActionTypes.ADD_COMMENT,
+  payload: comment,
+});
+
+export const postComment = (campsiteId, rating, author, text) => dispatch => {
+  
+  const newComment = {
+    campsiteId: campsiteId,
+    rating: rating,
+    author, // shorthand version. same as author: author
+    text, // shorthand version
+  };
+  
+  newComment.date = new Date().toISOString();
+  return fetch(baseUrl + 'comments', {
+    method: 'POST',
+    body: JSON.stringify(newComment),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  }).then(
+      response => {
+        if (response.ok) {
+          //good response
+          return response;
+        } else {
+          //bad response
+          const error = new Error(`Error ${response.status}: ${response.statusText}`);
+          error.response = response;
+          throw error;
+        }
+      },
+      error => {//no response;
+        throw error
+      })
+      .then(response => response.json())
+      .then(response => dispatch(addComment(response)))
+      .catch(error => {
+        console.log("post comment: ", error.message);
+        alert("Your comment could not be posted\nError: "+error.message);
+      })
+};
+
 export const fetchPromotions = () => dispatch => {
   dispatch(promotionLoading());
   return fetch(baseUrl + 'promotions')
@@ -106,7 +140,8 @@ export const fetchPromotions = () => dispatch => {
           throw error;
         }
       },
-      error => {//no response
+      error => {
+        //no response
         const errMess = new Error(error.message);
         throw errMess;
       }
