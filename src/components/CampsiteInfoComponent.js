@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component/*, useState*/} from 'react';
 import {
   Card,
   CardBody,
@@ -16,24 +16,72 @@ import {Link} from 'react-router-dom';
 import {Control, LocalForm, Errors} from 'react-redux-form';
 import {Loading} from './LoadingComponent';
 import {baseUrl} from '../shared/baseUrl';
-import {FadeTransform, Fade, Stagger} from 'react-animation-components'
+import {FadeTransform, Fade, Stagger} from 'react-animation-components';
+// import {useSpring, animated} from 'react-spring';
 
 const required = val => val && val.length;
 const maxLength = len => val => !val || val.length <= len;
 const minLength = len => val => !val || val.length >= len;
 
 function RenderCampsite({campsite}) {
+  // this is for animation exercise
+  // const [flipped, set] = useState(false);
+  // const {transform, opacity} = useSpring({
+  //   opacity: flipped ? 1 : 0,
+  //   transform: `perspective(600px) rotateX(${flipped ? 180 : 0}deg)`,
+  //   config: {mass: 5, tension: 500, friction: 80},
+  // });
   return (
     <div className="col-md-5 m-1">
-      <FadeTransform in transformProps={{exitTransform: 'scale(0.5) translateY(-50%)'}}>
+      <FadeTransform
+        in
+        transformProps={{
+          exitTransform: 'scale(0.5) translateY(-50%)',
+        }}
+      >
         <Card>
-          <CardImg width="100%" src={baseUrl+campsite.image} alt={campsite.name} />
+          <CardImg top src={baseUrl + campsite.image} alt={campsite.name} />
           <CardBody>
             <CardText>{campsite.description}</CardText>
           </CardBody>
         </Card>
       </FadeTransform>
     </div>
+
+    // this is for animation exercise
+    // <div className="col-md-5 m-1">
+    //   <FadeTransform
+    //     in
+    //     transformProps={{
+    //       exitTransform: 'scale(0.5) translateY(-50%)',
+    //     }}
+    //   >
+    //     <Card>
+    //       <div onClick={() => set(state => !state)}>
+    //         <animated.img
+    //           width="100%"
+    //           src={baseUrl + campsite.image}
+    //           style={{opacity: opacity.to(o => 1 - o), transform, position: 'absolute'}}
+    //           alt={campsite.name}
+    //         />
+    //         <animated.img
+    //           width="100%"
+    //           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSF5srwri1hTb5WQEqBIRntLCf7umaiwhLgHw&usqp=CAU"
+    //           style={{
+    //             opacity,
+    //             transform,
+    //             rotateX: '180deg',
+    //             position: 'relative',
+    //           }}
+    //           alt={campsite.name}
+    //         />
+    //       </div>
+    //       <CardBody>
+    //         <CardText>{campsite.description}</CardText>
+    //       </CardBody>
+    //     </Card>
+    //   </FadeTransform>
+    // </div>
   );
 }
 
@@ -69,20 +117,20 @@ function RenderComments({comments, campsiteId, postComment}) {
 }
 
 function CampsiteInfo(props) {
-  if(props.isLoading){
-    return(
-      <div className='container'>
-        <div className='row'>
-          <Loading />
-        </div>
-      </div>
-    )
-  }
-  if(props.errMess){
+  if (props.isLoading) {
     return (
       <div className="container">
         <div className="row">
-          <div className='col'>
+          <Loading />
+        </div>
+      </div>
+    );
+  }
+  if (props.errMess) {
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col">
             <h4>{props.errMess}</h4>
           </div>
         </div>
