@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import { Breadcrumb,BreadcrumbItem,Button,Label,Col,Row} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, Form, Errors } from 'react-redux-form';
-import {FadeTransform, Fade, Stagger} from 'react-animation-components';
 
 const required = val => val && val.length;
 const maxLength = len => val => !val || (val.length <= len);
@@ -213,8 +212,8 @@ class Contact extends Component {
                 </Col>
               </Row>
               <Row className="form-group">
-                <Col md={{size: 4, offset: 2}}>
-                  <div className="form-group">
+                <Col md={{size: 4, offset: 3}}>
+                  <div className="form-check">
                     <Label check>
                       <Control.checkbox model=".agree" name="agree" className="form-check-input" />{' '}
                       <strong>May we contact you?</strong>
