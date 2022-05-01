@@ -170,3 +170,93 @@ export function addPromotions(promotions) {
     payload: promotions,
   };
 }
+
+export const fetchPartners = () => dispatch => {
+
+  dispatch(partnersLoading());
+  
+  return fetch(baseUrl + 'partners')
+    .then(
+      response => {
+        
+        if (response.ok) {
+          //good response
+          return response;
+        } else {
+          //bad response
+          const error = new Error(`Error ${response.status}: ${response.statusText}`);
+          error.response = response;
+          throw error;
+        }
+      },
+      error => {
+        //no response
+        const errMess = new Error(error.message);
+        throw errMess;
+      }
+    )
+    .then(response => response.json())
+    .then(partners => dispatch(addPartners(partners)))
+    .catch(error => dispatch(partnersFailed(error.message)));
+};
+
+
+export function partnersLoading(){
+  return {
+    type: ActionTypes.PARTNERS_LOADING
+  }
+}
+
+export function addPartners(partners){
+  return {
+    type: ActionTypes.ADD_PARTNERS, 
+    payload: partners
+  }
+}
+
+export function partnersFailed(errMess){
+  return {type: ActionTypes.PARTNERS_FAILED, payload: errMess}
+}
+
+export const postFeedback = (firstName,lastName,phoneNum,email,agree,contactType,feedback)  => dispatch => {
+  const newFeedback = {
+    firstName,
+    lastName,
+    phoneNum,
+    email,
+    agree,
+    contactType,
+    feedback,
+  };
+
+  newFeedback.date = new Date().toISOString();
+  return fetch(baseUrl + 'feedback', {
+    method: 'POST',
+    body: JSON.stringify(newFeedback),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(
+      response => {
+        if (response.ok) {
+          //good response
+          return response;
+        } else {
+          //bad response
+          const error = new Error(`Error ${response.status}: ${response.statusText}`);
+          error.response = response;
+          throw error;
+        }
+      },
+      error => {
+        //no response;
+        throw error;
+      }
+    )
+    .then(() => alert('Thank you for your feedback'))
+    .catch(error => {
+      console.log('post feedback: ', error.message);
+      alert('Your feedback could not be posted\nError: ' + error.message);
+    });
+};
